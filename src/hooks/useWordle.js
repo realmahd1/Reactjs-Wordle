@@ -10,7 +10,7 @@ export default function useWordle(solution) {
     // format a guess into an array of letter objects 
     // e.g. [{key: 'a', color: 'yellow'}]
     const formatGuess = () => {
-
+        console.log('passed guess is - ', currentGuess)
     }
 
     // add a new guess to the guesses state
@@ -25,12 +25,21 @@ export default function useWordle(solution) {
     const handleKeyup = ({ key }) => {
         //individually keyup regex
         const keyupRegex = /^[a-zA-Z]$/;
-        if(key === 'Backspace') {
+        if(key === 'Enter' && currentGuess.length === 5) {
+            if(history.includes(currentGuess)) {
+                return alert('You already guessed that!');
+            }
+            if(turn > 5) {
+                return alert('You have already guessed 5 times!');
+            }
+            formatGuess();
+        }
+        if (key === 'Backspace') {
             setCurrentGuess(currentGuess.slice(0, -1));
             return;
         }
-        if(key.match(keyupRegex)){
-            if(currentGuess.length < 5){
+        if (key.match(keyupRegex)) {
+            if (currentGuess.length < 5) {
                 setCurrentGuess(currentGuess + key)
             }
         }
