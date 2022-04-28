@@ -4,13 +4,31 @@ export default function useWordle(solution) {
     const [turn, setTurn] = useState(0)
     const [currentGuess, setCurrentGuess] = useState('')
     const [guesses, setGuesses] = useState([]) // each guess is an array
-    const [history, setHistory] = useState([]) // each guess is a string
+    const [history, setHistory] = useState(['brave', 'ninja']) // each guess is a string
     const [isCorrect, setIsCorrect] = useState(false)
 
     // format a guess into an array of letter objects 
     // e.g. [{key: 'a', color: 'yellow'}]
     const formatGuess = () => {
-        console.log('passed guess is - ', currentGuess)
+        let solutionArray = [...solution];
+        let formattedGuess = [...currentGuess].map((letter) => { return { key: letter, color: 'grey' } });
+        
+        // find any green letters
+        formattedGuess.forEach((l, i) => {
+            if (solution[i] === l.key) {
+                formattedGuess[i].color = 'green'
+                solutionArray[i] = null
+            }
+        })
+
+        // find any yellow letters
+        formattedGuess.forEach((l, i) => {
+            if (solutionArray.includes(l.key) && l.color !== 'green') {
+                formattedGuess[i].color = 'yellow'
+                solutionArray[solutionArray.indexOf(l.key)] = null
+            }
+        })
+        return formattedGuess;
     }
 
     // add a new guess to the guesses state
@@ -25,14 +43,15 @@ export default function useWordle(solution) {
     const handleKeyup = ({ key }) => {
         //individually keyup regex
         const keyupRegex = /^[a-zA-Z]$/;
-        if(key === 'Enter' && currentGuess.length === 5) {
-            if(history.includes(currentGuess)) {
+        if (key === 'Enter' && currentGuess.length === 5) {
+            if (history.includes(currentGuess)) {
                 return alert('You already guessed that!');
             }
-            if(turn > 5) {
+            if (turn > 5) {
                 return alert('You have already guessed 5 times!');
             }
-            formatGuess();
+            const a = formatGuess();
+            console.log(a)
         }
         if (key === 'Backspace') {
             setCurrentGuess(currentGuess.slice(0, -1));
